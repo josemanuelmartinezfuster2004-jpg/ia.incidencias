@@ -56,11 +56,13 @@ async function main() {
   // Guarda la extracción junto con los datos necesarios para identificar
   // el correo y el modelo que se utilizó.
   const resultado = {
-    correo: numeroCorreo,
-    asunto,
-    remitente,
-    modelo,
-    extraccion: pedido,
+    correo: numeroCorreo, // Posición del mensaje dentro del archivo de entrada.
+    asunto, // Título del mensaje.
+    remitente, // Persona o dirección que envió el correo.
+    // Conserva el cuerpo del correo para compararlo con el borrador al revisarlo.
+    cuerpo_original: cuerpo,
+    modelo, // Modelo solicitado para realizar la extracción.
+    extraccion: pedido, // Borrador con productos y dudas pendientes.
   };
   const carpetaSalida = path.join(__dirname, '..', 'resultados', 'extracciones');
   await fs.mkdir(carpetaSalida, { recursive: true });
@@ -72,6 +74,7 @@ async function main() {
     carpetaSalida,
     `correo-${numeroCorreo}-${nombreModelo}.json`
   );
+  // JSON.stringify convierte el objeto en texto; el 2 añade sangría para leerlo mejor.
   await fs.writeFile(rutaSalida, JSON.stringify(resultado, null, 2), 'utf8');
   console.log(`Resultado guardado en: ${rutaSalida}`);
 }

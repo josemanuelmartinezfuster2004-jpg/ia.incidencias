@@ -2,6 +2,7 @@
 // pedidos, extraer productos y guardar el resultado. Este archivo todavía
 // depende de funciones que no están definidas aquí; el flujo completo de
 // Outlook se encuentra en leer-correos-outlook.js.
+// Es un esquema de referencia: no es la entrada que debe ejecutarse para leer Outlook.
 async function revisarBuzon() {
   // Obtiene autorización de Outlook y recupera los mensajes nuevos.
   const token = await obtenerTokenDeOutlook();

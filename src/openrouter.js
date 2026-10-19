@@ -1,3 +1,41 @@
+// Comprueba la estructura del borrador, no si está listo para un albarán.
+// Los datos desconocidos pueden ser null y las dudas quedan para revisión humana.
+// No rellena campos, no inventa valores y no modifica la respuesta del modelo.
+function validarBorrador(pedido) {
+  if (!pedido || typeof pedido !== 'object' || Array.isArray(pedido)) {
+    throw new Error('Borrador inválido: se esperaba un objeto.');
+  }
+
+  if (!Array.isArray(pedido.productos)) {
+    throw new Error('Borrador inválido: productos debe ser una lista.');
+  }
+
+  if (!Array.isArray(pedido.dudas)
+    || !pedido.dudas.every((duda) => typeof duda === 'string')) {
+    throw new Error('Borrador inválido: dudas debe ser una lista de textos.');
+  }
+
+  // Una lista vacía es válida: por ejemplo, si falta el adjunto del pedido.
+  for (const [indice, producto] of pedido.productos.entries()) {
+    const ubicacion = `Borrador inválido: producto ${indice + 1}`;
+    if (!producto || typeof producto !== 'object' || Array.isArray(producto)) {
+      throw new Error(`${ubicacion} debe ser un objeto.`);
+    }
+
+    // Cada campo debe existir, aunque su valor sea null por falta de información.
+    for (const campo of ['nombre', 'referencia', 'codigo_articulo', 'unidad']) {
+      if (producto[campo] !== null && typeof producto[campo] !== 'string') {
+        throw new Error(`${ubicacion}, ${campo} debe ser texto o null.`);
+      }
+    }
+
+    if (producto.cantidad !== null
+      && (typeof producto.cantidad !== 'number' || !Number.isFinite(producto.cantidad))) {
+      throw new Error(`${ubicacion}, cantidad debe ser un número válido o null.`);
+    }
+  }
+}
+
 // Envía el cuerpo del correo (y opcionalmente los PDF adjuntos) a OpenRouter
 // para obtener una lista estructurada de productos y preguntas pendientes.
 async function main(correo, modelo = 'openai/gpt-oss-120b', archivosPdf = []) {
@@ -17,6 +55,8 @@ async function main(correo, modelo = 'openai/gpt-oss-120b', archivosPdf = []) {
 
   // Construye la solicitud: modelo, instrucciones de extracción y formato JSON.
   // El plugin de análisis de PDF solo se activa cuando hay archivos adjuntos.
+  // fetch envía la petición por Internet. La clave se lee de la configuración,
+  // y el cuerpo del mensaje y los PDF se comparten con el servicio de IA.
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -53,7 +93,11 @@ async function main(correo, modelo = 'openai/gpt-oss-120b', archivosPdf = []) {
 
   // Convierte la respuesta JSON del modelo en un objeto JavaScript.
   const data = await response.json();
+  // JSON.parse convierte el texto de la respuesta en un objeto que JavaScript puede usar.
   const pedido = JSON.parse(data.choices[0].message.content);
+  // Un borrador incompleto sigue siendo válido. Solo se rechaza una estructura
+  // que impediría mostrarlo o editarlo; esta comprobación no aprueba el albarán.
+  validarBorrador(pedido);
 
   // Informa duración, uso de tokens y modelo efectivo para poder revisar
   // el coste y el comportamiento de la petición.
@@ -65,6 +109,7 @@ async function main(correo, modelo = 'openai/gpt-oss-120b', archivosPdf = []) {
   console.log(`Tokens totales: ${uso.total_tokens ?? 'no disponible'}`);
   console.log(`Modelo usado: ${data.model ?? 'no disponible'}`);
 
+  // Devuelve el borrador al script que lo pidió; el guardado se hace allí.
   return pedido;
 }
 

@@ -1,5 +1,6 @@
 // Módulos de Node.js para leer/escribir archivos y construir rutas válidas
 // en Windows, macOS y Linux.
+// Este archivo sirve tanto para clasificar un correo como para procesar un JSON completo.
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
@@ -51,6 +52,8 @@ Devuelve solo el nombre de la categoría.`;
 // Envía un correo a OpenRouter y devuelve su categoría. Acepta varios nombres
 // de campo para poder trabajar con correos de distintas fuentes o formatos.
 async function clasificarCorreo(correo) {
+  // ?. permite consultar un campo anidado aunque falte su objeto padre.
+  // || prueba alternativas cuando el valor anterior está vacío o no existe.
   const asunto = correo.asunto || correo.subject || correo.tema || '';
   const remitente = correo.remitente || correo.from?.emailAddress?.address || correo.from || correo.sender || correo.de || '';
   const contenido = correo.contenido || correo.body?.content || correo.body || correo.text || correo.texto || correo.mensaje || '';
@@ -197,6 +200,7 @@ async function main() {
   // de cada tanda. Así limita la concurrencia y reduce el trabajo perdido.
   for (let i = categoriasGuardadas.length; i < correos.length; i += 5) {
     const grupo = correos.slice(i, i + 5);
+    // Promise.all espera a que terminen las cinco consultas; si una falla, la tanda falla.
     const categoriasGrupo = await Promise.all(grupo.map(clasificarCorreo));
 
     for (let j = 0; j < grupo.length; j += 1) {
