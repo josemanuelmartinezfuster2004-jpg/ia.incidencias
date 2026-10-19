@@ -2,6 +2,10 @@
 // La conexión real requiere configurar Microsoft y completar el inicio de sesión.
 
 
+
+
+
+
 // Lee correos nuevos de Outlook, los clasifica y extrae los pedidos.
 const fs = require('node:fs/promises');
 const path = require('node:path');
