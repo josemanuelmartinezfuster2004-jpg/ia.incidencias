@@ -4,6 +4,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
+
 // Categorías que puede devolver el modelo. Se usan también para comprobar
 // que la respuesta sea válida y para crear un archivo por categoría.
 const categorias = [
