@@ -1,0 +1,35 @@
+
+[
+  {
+    "referencia": "PROD001",
+    "nombreOficial": "Tomate triturado",
+    "nombresAlternativos": [
+      "tomate triturado",
+      "tomate triturado en conserva"
+    ]
+  },
+  {
+    "referencia": "PROD002",
+    "nombreOficial": "Tomate natural",
+    "nombresAlternativos": [
+      "tomate natural",
+      "tomate entero natural"
+    ]
+  },
+  {
+    "referencia": "PROD003",
+    "nombreOficial": "Zanahoria",
+    "nombresAlternativos": [
+      "zanahoria",
+      "zanahorias"
+    ]
+  },
+  {
+    "referencia": "PROD004",
+    "nombreOficial": "Patata",
+    "nombresAlternativos": [
+      "patata",
+      "patatas"
+    ]
+  }
+]

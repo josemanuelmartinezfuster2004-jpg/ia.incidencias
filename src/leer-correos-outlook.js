@@ -13,6 +13,7 @@ const crypto = require('node:crypto');
 const { PublicClientApplication } = require('@azure/msal-node');
 const { clasificarCorreo } = require('./categorizar-correos');
 const { main: extraerPedido } = require('./openrouter');
+const { main: extraerIncidencia } = require('./openrouter-incidencias');
 
 // Rutas locales: borradores, mensajes ya procesados y sesión de Microsoft.
 const carpetaResultados = path.join(__dirname, '..', 'resultados', 'correos-outlook');
@@ -64,8 +65,8 @@ async function obtenerToken(correoBuzon) {
         scopes: ['User.Read', 'Mail.Read'],
       });
       return token.accessToken;
-    } catch {
-      // Si ha caducado, solicitamos de nuevo el inicio de sesión.
+       } catch (error) {
+      console.error('Error al reutilizar la sesión:', error);
     }
   }
 
@@ -243,13 +244,59 @@ async function revisarBuzon(correoBuzon) {
       let extraccion;
 
       // Solo los pedidos pasan al extractor; el texto de TXT/CSV se une al correo.
-      if (categoria === 'Pedidos') {
+       // Los pedidos usan su extractor actual y las incidencias el nuevo.
+      if (categoria === 'Pedidos' || categoria === 'Incidencias') {
         adjuntos = await obtenerAdjuntos(correo, token);
-        const texto = `Asunto: ${correo.subject || ''}\nRemitente: ${correo.from?.emailAddress?.address || ''}\n\n${correo.body?.content || ''}${adjuntos.texto}`;
-        extraccion = await extraerPedido(texto, modeloExtraccion, adjuntos.pdfs);
-        if (adjuntos.dudas.length) extraccion.dudas.push(...adjuntos.dudas);
-        if (adjuntos.nombres.length && adjuntos.pdfs.length === 0 && !adjuntos.texto) {
-          extraccion.dudas.push('El pedido puede estar en un adjunto que este programa no puede leer todavía.');
+
+        const texto = [
+          `Asunto: ${correo.subject || ''}`,
+          `Remitente: ${correo.from?.emailAddress?.address || ''}`,
+          '',
+          correo.body?.content || '',
+          adjuntos.texto,
+        ].join('\n');
+
+        if (categoria === 'Pedidos') {
+          extraccion = await extraerPedido(
+            texto,
+            modeloExtraccion,
+            adjuntos.pdfs
+          );
+        } else {
+          extraccion = await extraerIncidencia(
+            texto,
+            modeloExtraccion,
+            adjuntos.pdfs
+          );
+        }
+
+        if (!extraccion || typeof extraccion !== 'object') {
+          extraccion = { dudas: [] };
+        }
+
+        if (!Array.isArray(extraccion.dudas)) {
+          extraccion.dudas = [];
+        }
+
+        extraccion.dudas.push(...adjuntos.dudas);
+
+        if (
+          adjuntos.nombres.length > 0
+          && adjuntos.pdfs.length === 0
+          && !adjuntos.texto
+        ) {
+          extraccion.dudas.push(
+            'El correo contiene adjuntos que no se han podido incorporar a la extracción. Revisa los archivos manualmente.'
+          );
+        }
+
+        // Si la extracción contiene una lista de incidencias, asegurar que cada incidencia tenga su lista de dudas
+        if (Array.isArray(extraccion.incidencias)) {
+          for (const inc of extraccion.incidencias) {
+            if (!Array.isArray(inc.dudas)) {
+              inc.dudas = [];
+            }
+          }
         }
       }
 

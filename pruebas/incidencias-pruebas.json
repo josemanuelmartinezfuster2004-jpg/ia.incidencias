@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1,
+    "categoria": "Incidencias",
+    "asunto": "Producto dañado",
+    "remitente": "cliente1@ejemplo.com",
+    "cuerpo": "Buenos días, hemos recibido 3 cajas de tomate triturado dañadas. Queremos devolverlas. Gracias."
+  },
+  {
+    "id": 2,
+    "categoria": "Incidencias",
+    "asunto": "Problema con la mercancía",
+    "remitente": "cliente2@ejemplo.com",
+    "cuerpo": "Buenas tardes, las zanahorias han llegado golpeadas. Os avisamos para que lo tengáis en cuenta, pero no solicitamos una devolución."
+  },
+  {
+    "id": 3,
+    "categoria": "Incidencias",
+    "asunto": "Consulta sobre producto",
+    "remitente": "cliente3@ejemplo.com",
+    "cuerpo": "Hola, hemos recibido unas cajas de tomate y necesitamos que nos confirméis qué producto aparece en la factura. No sabemos si es tomate triturado o tomate natural."
+  },
+  {
+    "id": 4,
+    "categoria": "Incidencias",
+    "asunto": "Devolución de mercancía",
+    "remitente": "cliente4@ejemplo.com",
+    "cuerpo": "Buenos días, hemos recibido 2 cajas de zanahorias dañadas. No queremos devolver el producto, solo avisaros."
+  },
+  {
+    "id": 5,
+    "categoria": "Incidencias",
+    "asunto": "Faltan productos en el pedido",
+    "remitente": "cliente5@ejemplo.com",
+    "cuerpo": "Hola, hemos recibido tres cajas de patatas, pero faltan otras dos cajas del pedido."
+  },
+  {
+    "id": 6,
+    "categoria": "Incidencias",
+    "asunto": "Producto desconocido",
+    "remitente": "cliente6@ejemplo.com",
+    "cuerpo": "Buenas tardes, hemos recibido 4 cajas de calabacines dañados."
+  },
+  {
+    "id": 7,
+    "categoria": "Incidencias",
+    "asunto": "Mercancía dañada y pedido incompleto",
+    "remitente": "cliente7@ejemplo.com",
+    "cuerpo": "Hemos recibido 5 cajas de tomate triturado dañadas y además faltan 2 cajas de zanahorias."
+  },
+  {
+    "id": 8,
+    "categoria": "Otros",
+    "asunto": "Horario de entrega",
+    "remitente": "cliente8@ejemplo.com",
+    "cuerpo": "Buenos días, ¿podríais confirmarnos el horario de entrega de la próxima semana?"
+  }
+
+]

@@ -4,7 +4,9 @@
   "private": true,
   "description": "Clasificación de correos y extracción de pedidos de Outlook",
   "scripts": {
-    "leer-outlook": "node --env-file=.env src/leer-correos-outlook.js"
+    "test": "node --test",
+    "leer-outlook": "node --env-file=.env src/leer-correos-outlook.js",
+    "procesar-incidencias": "node --env-file=.env src/procesar-incidencias-reales.js"
   },
   "dependencies": {
     "@azure/msal-node": "^3.8.10"
